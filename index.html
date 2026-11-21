@@ -471,7 +471,7 @@
           nipKepsek: '19690412 199512 1 002',
           wakasekKurikulum: 'Siti Rahmawati, S.Pd',
           kontakWa: '081254001122',
-          statusKurikulum: 'Kurikulum Merdeka (Mandiri Berbagi)',
+          statusKurikulum: 'Kurikulum Merdeka',
           jumlahRombel: 24,
           jumlahSiswa: 768,
           alamat: 'Jl. Pendidikan No. 12, Sangatta Utara, Kab. Kutai Timur',
@@ -495,7 +495,7 @@
           nipKepsek: '19750918 200012 2 005',
           wakasekKurikulum: 'Abdul Rahman, S.Pd',
           kontakWa: '081347889900',
-          statusKurikulum: 'Kurikulum Merdeka (Mandiri Berubah)',
+          statusKurikulum: 'Kurikulum Merdeka',
           jumlahRombel: 15,
           jumlahSiswa: 450,
           alamat: 'Jl. Poros Bontang - Sangatta Km. 8, Sangatta Selatan',
@@ -1965,7 +1965,7 @@
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Status Implementasi Kurikulum</label>
                 <select id="prof-kurikulum" class="w-full px-4 py-2.5 rounded-2xl bg-[#F8F7FC] border border-[#E8E6F2] text-xs font-semibold">
-                  ${['Kurikulum Merdeka (Mandiri Belajar)', 'Kurikulum Merdeka (Mandiri Berubah)', 'Kurikulum Merdeka (Mandiri Berbagi)', 'Kurikulum Nasional'].map(opt => `<option value="${opt}" ${sch.statusKurikulum === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                  ${['Kurikulum Merdeka', 'Lainnya'].map(opt => `<option value="${opt}" ${(sch.statusKurikulum === opt || (!['Kurikulum Merdeka', 'Lainnya'].includes(sch.statusKurikulum) && opt === 'Kurikulum Merdeka')) ? 'selected' : ''}>${opt}</option>`).join('')}
                 </select>
               </div>
               <div class="grid grid-cols-2 gap-3">
@@ -3736,7 +3736,7 @@
           kontakWa: document.getElementById('sch-wa').value.trim(),
           latitude: document.getElementById('sch-lat')?.value.trim() || '',
           longitude: document.getElementById('sch-lng')?.value.trim() || '',
-          statusKurikulum: old?.statusKurikulum || 'Kurikulum Merdeka (Mandiri Berubah)',
+          statusKurikulum: old?.statusKurikulum || 'Kurikulum Merdeka',
           jumlahRombel: old?.jumlahRombel || 0,
           jumlahSiswa: old?.jumlahSiswa || 0,
           daftarGuru: old?.daftarGuru || [],
@@ -3874,7 +3874,7 @@
           const old = state.schools.find(x => x.id === r.npsn);
           await saveDocItem('schools', r.npsn, {
             ...r,
-            statusKurikulum: old?.statusKurikulum || 'Kurikulum Merdeka (Mandiri Berubah)',
+            statusKurikulum: old?.statusKurikulum || 'Kurikulum Merdeka',
             jumlahRombel: old?.jumlahRombel || 0,
             jumlahSiswa: old?.jumlahSiswa || 0,
             daftarGuru: old?.daftarGuru || [],
@@ -4085,7 +4085,7 @@
         showToast('Data berhasil dihapus.');
       },
 
-      // --- PRATINJAU & EKSPOR DOKUMEN CETAK RESMI (PDF / WORD / HTML) ---
+      // --- PRATINJAU & EKSPOR DOKUMEN CETAK RESMI (PDF) ---
       openPrintPreviewModal(title, filename, bodyHtml) {
         state.lastPrintDoc = { title, filename, html: bodyHtml };
         const printArea = document.getElementById('print-area');
@@ -4095,20 +4095,12 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E8E6F2]">
               <div class="min-w-0">
                 <h3 class="text-sm sm:text-base font-extrabold text-[#1A162E] truncate">${esc(title)}</h3>
-                <p class="text-[11px] text-slate-500 mt-0.5">Pratinjau Dokumen Resmi A4 — Siap cetak PDF atau unduh ke Word/HTML.</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Pratinjau Dokumen Resmi A4 — Siap cetak atau simpan sebagai PDF.</p>
               </div>
-              <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
                 <button type="button" onclick="window.UI.triggerPrintNow()"
-                  class="px-4 py-2 rounded-full bg-[#4B39B5] hover:bg-[#3A2B95] text-white text-xs font-bold inline-flex items-center gap-1.5">
+                  class="px-5 py-2 rounded-full bg-[#4B39B5] hover:bg-[#3A2B95] text-white text-xs font-bold shadow-float inline-flex items-center gap-1.5">
                   <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak / PDF
-                </button>
-                <button type="button" onclick="window.UI.downloadPrintAsWord()"
-                  class="px-3.5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold inline-flex items-center gap-1.5">
-                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Unduh Word
-                </button>
-                <button type="button" onclick="window.UI.downloadPrintAsHtml()"
-                  class="px-3.5 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center gap-1.5">
-                  <i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh HTML
                 </button>
                 <button type="button" onclick="window.UI.closeModal()" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-400">
                   <i data-lucide="x" class="w-4 h-4"></i>
@@ -4141,38 +4133,6 @@
         } catch (_) {
           window.print();
         }
-      },
-
-      downloadPrintAsWord() {
-        const docData = state.lastPrintDoc;
-        if (!docData?.html) return showToast('Dokumen belum siap diunduh.', 'error');
-        const wordHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${esc(docData.title)}</title><style>body{font-family:'Times New Roman',Times,serif;color:#000;}</style></head><body>${docData.html}</body></html>`;
-        const blob = new Blob(['\ufeff', wordHtml], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${docData.filename || 'dokumen'}.doc`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showToast('Dokumen Word (.doc) berhasil diunduh!');
-      },
-
-      downloadPrintAsHtml() {
-        const docData = state.lastPrintDoc;
-        if (!docData?.html) return showToast('Dokumen belum siap diunduh.', 'error');
-        const fullHtml = `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${esc(docData.title)}</title><style>body{font-family:'Times New Roman',Times,serif;color:#000;max-width:794px;margin:20px auto;padding:24px;}@media print{body{margin:0;padding:0;}@page{size:A4;margin:14mm;}}</style></head><body>${docData.html}<script>window.onload=function(){window.print();};<\/script></body></html>`;
-        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${docData.filename || 'dokumen'}.html`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showToast('File HTML siap cetak berhasil diunduh!');
       },
 
       async printSchoolProfile(schoolId) {
